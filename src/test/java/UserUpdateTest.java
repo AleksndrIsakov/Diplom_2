@@ -2,15 +2,11 @@ import io.qameta.allure.Story;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import javax.swing.*;
-import java.util.Random;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
@@ -27,11 +23,14 @@ public class UserUpdateTest {
     public UserUpdateTest(Field field) {
         user = UserGenerator.random();
         switch (field) {
-            case NAME: user.setName(RandomStringUtils.randomAlphabetic(10));
+            case NAME:
+                user.setName(RandomStringUtils.randomAlphabetic(10));
                 break;
-            case EMAIL: user.setEmail(UserGenerator.randomEmail());
+            case EMAIL:
+                user.setEmail(UserGenerator.randomEmail());
                 break;
-            case PASSWORD: user.setPassword(RandomStringUtils.randomAlphabetic(10));
+            case PASSWORD:
+                user.setPassword(RandomStringUtils.randomAlphabetic(10));
                 break;
             default: // Ничего не меняем
                 break;
@@ -46,7 +45,7 @@ public class UserUpdateTest {
     }
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         client.delete();
     }
 

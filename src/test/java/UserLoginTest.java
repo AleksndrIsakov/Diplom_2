@@ -16,7 +16,7 @@ public class UserLoginTest {
     private User user;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         client = new UserClient();
         user = UserGenerator.random();
         client.register(user);

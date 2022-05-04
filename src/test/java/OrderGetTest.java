@@ -1,4 +1,5 @@
 import io.qameta.allure.Story;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.junit.After;
 import org.junit.Before;
@@ -29,6 +30,7 @@ public class OrderGetTest {
     }
 
     @Test
+    @DisplayName("Получение заказа авторизованным пользователем")
     public void getOrdersForAuthorizedUser() {
         ValidatableResponse response = orderClient.getOrders(userClient);
         int statusCode = response.extract().statusCode();
@@ -37,6 +39,7 @@ public class OrderGetTest {
     }
 
     @Test
+    @DisplayName("Получение заказа неавторизованным пользователем")
     public void getOrdersForUnAuthorizedUser() {
         ValidatableResponse response = orderClient.getOrders();
         int statusCode = response.extract().statusCode();

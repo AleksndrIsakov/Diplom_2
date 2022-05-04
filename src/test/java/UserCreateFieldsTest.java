@@ -20,11 +20,14 @@ public class UserCreateFieldsTest {
     public UserCreateFieldsTest(Field field) {
         this.user = UserGenerator.random();
         switch (field) {
-            case NAME: user.setName("");
+            case NAME:
+                user.setName("");
                 break;
-            case EMAIL: user.setEmail("");
+            case EMAIL:
+                user.setEmail("");
                 break;
-            case PASSWORD: user.setPassword("");
+            case PASSWORD:
+                user.setPassword("");
                 break;
         }
     }

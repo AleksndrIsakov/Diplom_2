@@ -43,14 +43,14 @@ public class OrderCreateTest {
     }
 
     @Parameterized.Parameters
-    public static Object[][] setData(){
+    public static Object[][] setData() {
         List<Ingredient> ingredients = OrderClient.getIngredients().data;
         List<String> uniqueType = ingredients.stream().map(Ingredient::getType).distinct().collect(Collectors.toList());
 
         // Набор уникальных по типу ингредиентов
         List<Ingredient> uniqueIngredients = new ArrayList<>();
-        for (String type: uniqueType)
-            uniqueIngredients.add(ingredients.stream().filter(i->i.getType().equals(type)).findAny().get());
+        for (String type : uniqueType)
+            uniqueIngredients.add(ingredients.stream().filter(i -> i.getType().equals(type)).findAny().get());
 
         // Набор ингредиентов с неверным хеш кодом
         List<Ingredient> wrongHashIngredients = new ArrayList<>();
@@ -60,7 +60,7 @@ public class OrderCreateTest {
         List<Ingredient> withoutIngredients = new ArrayList<>();
 
         return new Object[][]{
-                {uniqueIngredients, SC_OK}, 
+                {uniqueIngredients, SC_OK},
                 {withoutIngredients, SC_BAD_REQUEST},
                 {wrongHashIngredients, SC_INTERNAL_SERVER_ERROR}
         };

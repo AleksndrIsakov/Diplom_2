@@ -4,7 +4,7 @@ import lombok.Data;
 @Data
 @Builder
 public class Ingredient {
-    
+
     private String _id;
     private String name;
     private String type;
