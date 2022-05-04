@@ -1,16 +1,15 @@
-import io.qameta.allure.Description;
+import io.qameta.allure.Story;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Locale;
-
 import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@Story("Создание пользователя")
 public class UserLoginTest {
 
     private UserClient client;
@@ -25,7 +24,7 @@ public class UserLoginTest {
 
     @Test
     @DisplayName("Логин под существующим пользователем")
-    public void login() {
+    public void loginSuccessful() {
         ValidatableResponse response = client.login(user);
         int statusCode = response.extract().statusCode();
         assertThat(statusCode, equalTo(SC_OK));

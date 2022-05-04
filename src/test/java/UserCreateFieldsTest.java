@@ -1,3 +1,4 @@
+import io.qameta.allure.Story;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.junit.Before;
@@ -9,6 +10,7 @@ import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@Story("Создание пользователя")
 @RunWith(Parameterized.class)
 public class UserCreateFieldsTest {
 
@@ -43,7 +45,7 @@ public class UserCreateFieldsTest {
 
     @Test
     @DisplayName("Создание пользователя с незаполненным обязательным полем")
-    public void createWithUnfilledFields() {
+    public void checkCreateWithUnfilledFields() {
         ValidatableResponse response = client.register(user);
         int statusCode = response.extract().statusCode();
         assertThat(statusCode, equalTo(SC_FORBIDDEN));

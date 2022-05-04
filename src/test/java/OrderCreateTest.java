@@ -1,3 +1,4 @@
+import io.qameta.allure.Story;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -8,7 +9,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +16,7 @@ import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@Story("Создание заказа")
 @RunWith(Parameterized.class)
 public class OrderCreateTest {
 
@@ -67,19 +68,32 @@ public class OrderCreateTest {
 
     @Test
     @DisplayName("Создание заказа c авторизацией")
-    public void createOrder() {
+    public void checkCreateOrder() {
         ValidatableResponse response = orderClient.createOrder(userClient, ingredients);
+        int statusCode = response.extract().statusCode();
+        assertThat(statusCode, equalTo(expectedStatusCode));
+
+        if (expectedStatusCode == SC_OK) {
+            OrderInfo orderInfo = response.extract().as(OrderInfo.class);
+        }
+
+        if (expectedStatusCode == SC_BAD_REQUEST) {
+            Message message = response.extract().as(Message.class);
+            assertThat(message.getMessage(), equalTo("Ingredient ids must be provided"));
+        }
+
+    }
+
+    @Test
+    @DisplayName("Создание заказа без авторизации")
+    public void checkCreateOrderWithoutAuthorize() {
+        ValidatableResponse response = orderClient.createOrder(ingredients);
         int statusCode = response.extract().statusCode();
 
         assertThat(statusCode, equalTo(expectedStatusCode));
     }
 
-    @Test
-    @DisplayName("Создание заказа без авторизации")
-    public void createOrderWithoutAuthorize() {
-        ValidatableResponse response = orderClient.createOrder(ingredients);
-        int statusCode = response.extract().statusCode();
+    private void checkExpectedBody(ValidatableResponse response) {
 
-        assertThat(statusCode, equalTo(expectedStatusCode));
     }
 }

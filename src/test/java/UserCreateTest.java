@@ -1,3 +1,4 @@
+import io.qameta.allure.Story;
 import io.qameta.allure.junit4.DisplayName;
 
 import static org.apache.http.HttpStatus.SC_FORBIDDEN;
@@ -10,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+@Story("Создание пользователя")
 public class UserCreateTest {
 
     private UserClient client;

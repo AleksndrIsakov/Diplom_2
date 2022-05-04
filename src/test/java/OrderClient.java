@@ -54,7 +54,16 @@ public class OrderClient extends StellarBurgersRestClient {
                 .spec(getBaseSpec())
                 .auth().oauth2(client.getAuthToken())
                 .when()
-                .get(INGREDIENTS)
+                .get(USER_ORDERS)
+                .then();
+    }
+
+    @Step("Получение заказов без авторизации")
+    public ValidatableResponse getOrders() {
+        return RestAssured.given()
+                .spec(getBaseSpec())
+                .when()
+                .get(USER_ORDERS)
                 .then();
     }
 
