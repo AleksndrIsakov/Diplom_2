@@ -12,8 +12,8 @@ public class UserClient extends StellarBurgersRestClient {
     private static final String LOGIN = "api/auth/login";
     private static final String USER = "api/auth/user";
 
-    private static String accessToken;
-    private static String refreshToken;
+    private String accessToken;
+    private String refreshToken;
 
     @Step("Создание пользователя")
     public ValidatableResponse register(User user) {
@@ -51,6 +51,27 @@ public class UserClient extends StellarBurgersRestClient {
                 .then();
     }
 
+    @Step("Обновление информации о пользователе")
+    public ValidatableResponse updateInfo(User user) {
+        return given()
+                .spec(getBaseSpec())
+                .auth().oauth2(accessToken)
+                .body(user)
+                .when()
+                .patch(USER)
+                .then();
+    }
+
+    @Step("Обновление информации о пользователе без авторизации")
+    public ValidatableResponse updateInfoWithoutAuth(User user) {
+        return given()
+                .spec(getBaseSpec())
+                .body(user)
+                .when()
+                .patch(USER)
+                .then();
+    }
+
     @Step("Удаление пользователя")
     public ValidatableResponse delete() {
         return given()
@@ -61,11 +82,14 @@ public class UserClient extends StellarBurgersRestClient {
                 .then();
     }
 
+    public String getAuthToken() {
+        return accessToken;
+    }
 
     private void getTokens(ValidatableResponse response) {
         if (response.extract().statusCode() == SC_OK) {
             accessToken = response.extract().jsonPath().getString("accessToken").replace("Bearer ", "");
-            refreshToken = response.extract().jsonPath().getString("refreshToken");
+            refreshToken = response.extract().jsonPath().getString("refreshToken").replace("Bearer ", "");
         }
     }
 }
