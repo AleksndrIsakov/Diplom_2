@@ -68,7 +68,7 @@ public class UserUpdateTest {
         Message message = response.extract().as(Message.class);
 
         assertThat(statusCode, equalTo(SC_OK));
-        message.check(user.getName(), user.getEmail(), true);
+        message.check(user, true);
     }
 
     @Test

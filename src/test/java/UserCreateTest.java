@@ -39,7 +39,7 @@ public class UserCreateTest {
         Message message = response.extract().as(Message.class);
 
         assertThat("Код ответа отличается от ожидаемого", statusCode, equalTo(SC_OK));
-        message.check(user.getName(), user.getEmail(), true);
+        message.check(user, true);
     }
 
     @Test

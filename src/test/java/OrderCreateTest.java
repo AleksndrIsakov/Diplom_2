@@ -8,9 +8,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import request.Ingredient;
+import response.CanCheck;
 import response.Message;
+import response.Order;
 import response.OrderList;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +29,9 @@ public class OrderCreateTest {
     private UserClient userClient;
     private OrderClient orderClient;
     private List<Ingredient> ingredients;
-    private int expectedStatusCode;
+    private Type objType;
+    private Object expObj;
+    private int expStsCode;
 
     @Before
     public void setUp() {
@@ -40,9 +45,11 @@ public class OrderCreateTest {
         userClient.delete();
     }
 
-    public OrderCreateTest(List<Ingredient> ingredients, int statusCode) {
+    public OrderCreateTest(List<Ingredient> ingredients, Object expObj, Type objType, int statusCode) {
         this.ingredients = ingredients;
-        this.expectedStatusCode = statusCode;
+        this.expObj = expObj;
+        this.objType = objType;
+        this.expStsCode = statusCode;
     }
 
     @Parameterized.Parameters
@@ -55,6 +62,13 @@ public class OrderCreateTest {
         for (String type : uniqueType)
             uniqueIngredients.add(ingredients.stream().filter(i -> i.getType().equals(type)).findAny().get());
 
+        // Сформируем ожидаемый результат
+        OrderList expOrderList = new OrderList();
+        Order expOrder = new Order();
+
+        expOrder.setIngredients(uniqueIngredients);
+        expOrderList.setOrder(expOrder);
+
         // Набор ингредиентов с неверным хеш кодом
         List<Ingredient> wrongHashIngredients = new ArrayList<>();
         wrongHashIngredients.add(Ingredient.builder()._id(RandomStringUtils.randomAlphabetic(5)).build());
@@ -63,9 +77,9 @@ public class OrderCreateTest {
         List<Ingredient> withoutIngredients = new ArrayList<>();
 
         return new Object[][]{
-                {uniqueIngredients, SC_OK},
-                {withoutIngredients, SC_BAD_REQUEST},
-                {wrongHashIngredients, SC_INTERNAL_SERVER_ERROR}
+                {uniqueIngredients, expOrderList, OrderList.class, SC_OK},
+                {withoutIngredients, "Ingredient ids must be provided", Message.class, SC_BAD_REQUEST},
+                {wrongHashIngredients, null, null, SC_INTERNAL_SERVER_ERROR}
         };
     }
 
@@ -74,17 +88,12 @@ public class OrderCreateTest {
     public void checkCreateOrder() {
         ValidatableResponse response = orderClient.createOrder(userClient, ingredients);
         int statusCode = response.extract().statusCode();
-        assertThat(statusCode, equalTo(expectedStatusCode));
+        assertThat(statusCode, equalTo(expStsCode));
 
-        if (expectedStatusCode == SC_OK) {
-            OrderList orderInfo = response.extract().as(OrderList.class);
+        if (objType != null && expObj != null) {
+            CanCheck message = response.extract().as(objType);
+            message.check(expObj, (expStsCode == SC_OK)? true: false);
         }
-
-        if (expectedStatusCode == SC_BAD_REQUEST) {
-            Message message = response.extract().as(Message.class);
-            message.check("Ingredient ids must be provided", false);
-        }
-
     }
 
     @Test
@@ -93,11 +102,11 @@ public class OrderCreateTest {
         ValidatableResponse response = orderClient.createOrder(ingredients);
         int statusCode = response.extract().statusCode();
 
-        assertThat(statusCode, equalTo(expectedStatusCode));
+        assertThat(statusCode, equalTo(expStsCode));
 
-        if (expectedStatusCode == SC_BAD_REQUEST) {
-            Message message = response.extract().as(Message.class);
-            message.check("Ingredient ids must be provided", false);
+        if (objType != null && expObj != null) {
+            CanCheck message = response.extract().as(objType);
+            message.check(expObj, (expStsCode == SC_OK)? true: false);
         }
     }
 
