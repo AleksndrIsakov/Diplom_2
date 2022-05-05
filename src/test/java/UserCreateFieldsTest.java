@@ -1,0 +1,69 @@
+import io.qameta.allure.Story;
+import io.qameta.allure.junit4.DisplayName;
+import io.restassured.response.ValidatableResponse;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import request.User;
+import response.Message;
+
+import static org.apache.http.HttpStatus.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+@Story("Создание пользователя")
+@RunWith(Parameterized.class)
+public class UserCreateFieldsTest {
+
+    private UserClient client;
+    private User user;
+
+    public UserCreateFieldsTest(Field field) {
+        this.user = UserGenerator.random();
+        switch (field) {
+            case NAME:
+                user.setName("");
+                break;
+            case EMAIL:
+                user.setEmail("");
+                break;
+            case PASSWORD:
+                user.setPassword("");
+                break;
+        }
+    }
+
+    @Before
+    public void setUp() {
+        client = new UserClient();
+    }
+
+    @Parameterized.Parameters
+    public static Object[][] setData() {
+        return new Object[][]{
+                {Field.NAME},
+                {Field.EMAIL},
+                {Field.PASSWORD}
+        };
+    }
+
+    @Test
+    @DisplayName("Создание пользователя с незаполненным обязательным полем")
+    public void checkCreateWithUnfilledFields() {
+        ValidatableResponse response = client.register(user);
+        int statusCode = response.extract().statusCode();
+        Message message = response.extract().as(Message.class);
+
+        assertThat(statusCode, equalTo(SC_FORBIDDEN));
+        message.check("Email, password and name are required fields", false);
+    }
+
+    enum Field {
+        NAME,
+        EMAIL,
+        PASSWORD
+    }
+}
+
+
