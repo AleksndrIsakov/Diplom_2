@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import request.User;
 import response.Message;
-import response.UserMessage;
 
 @Story("Создание пользователя")
 public class UserCreateTest {
@@ -37,7 +36,7 @@ public class UserCreateTest {
 
         ValidatableResponse response = client.register(user);
         int statusCode = response.extract().statusCode();
-        UserMessage message = response.extract().as(UserMessage.class);
+        Message message = response.extract().as(Message.class);
 
         assertThat("Код ответа отличается от ожидаемого", statusCode, equalTo(SC_OK));
         message.check(user.getName(), user.getEmail(), true);

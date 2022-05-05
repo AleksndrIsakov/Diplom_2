@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import request.User;
 import response.Message;
-import response.UserMessage;
 
 import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -30,7 +29,7 @@ public class UserLoginTest {
     public void loginSuccessful() {
         ValidatableResponse response = client.login(user);
         int statusCode = response.extract().statusCode();
-        UserMessage message = response.extract().as(UserMessage.class);
+        Message message = response.extract().as(Message.class);
 
         assertThat(statusCode, equalTo(SC_OK));
         message.check(user.getName(), user.getEmail(), true);
@@ -60,7 +59,6 @@ public class UserLoginTest {
         message.check("email or password are incorrect", false);
     }
 
-    public void tearDown() {
-        client.delete();
+    public void tearDown() {client.delete();
     }
 }
