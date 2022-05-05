@@ -1,3 +1,5 @@
+package request;
+
 import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang3.RandomStringUtils;

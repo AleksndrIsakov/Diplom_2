@@ -4,6 +4,9 @@ import io.restassured.response.ValidatableResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
+import request.User;
+import response.Message;
+import response.UserMessage;
 
 import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -27,7 +30,10 @@ public class UserLoginTest {
     public void loginSuccessful() {
         ValidatableResponse response = client.login(user);
         int statusCode = response.extract().statusCode();
+        UserMessage message = response.extract().as(UserMessage.class);
+
         assertThat(statusCode, equalTo(SC_OK));
+        message.check(user.getName(), user.getEmail(), true);
     }
 
     @Test
@@ -36,7 +42,10 @@ public class UserLoginTest {
         user.setEmail(RandomStringUtils.randomAlphabetic(10));
         ValidatableResponse response = client.login(user);
         int statusCode = response.extract().statusCode();
+        Message message = response.extract().as(Message.class);
+
         assertThat(statusCode, equalTo(SC_UNAUTHORIZED));
+        message.check("email or password are incorrect", false);
     }
 
     @Test
@@ -45,7 +54,10 @@ public class UserLoginTest {
         user.setPassword(RandomStringUtils.randomAlphabetic(10));
         ValidatableResponse response = client.login(user);
         int statusCode = response.extract().statusCode();
+        Message message = response.extract().as(Message.class);
+
         assertThat(statusCode, equalTo(SC_UNAUTHORIZED));
+        message.check("email or password are incorrect", false);
     }
 
     public void tearDown() {

@@ -1,7 +1,6 @@
 import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
-
-import java.util.Calendar;
+import request.User;
 
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_OK;

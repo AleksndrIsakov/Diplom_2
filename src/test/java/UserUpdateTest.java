@@ -7,6 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import request.User;
+import response.Message;
+import response.UserMessage;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
@@ -63,7 +66,10 @@ public class UserUpdateTest {
     public void updateUserWithAuthorization() {
         ValidatableResponse response = client.updateInfo(user);
         int statusCode = response.extract().statusCode();
+        UserMessage message = response.extract().as(UserMessage.class);
+
         assertThat(statusCode, equalTo(SC_OK));
+        message.check(user.getName(), user.getEmail(), true);
     }
 
     @Test
@@ -71,7 +77,10 @@ public class UserUpdateTest {
     public void updateUserWithoutAuthorization() {
         ValidatableResponse response = client.updateInfoWithoutAuth(user);
         int statusCode = response.extract().statusCode();
+        Message message = response.extract().as(Message.class);
+
         assertThat(statusCode, equalTo(SC_UNAUTHORIZED));
+        message.check("You should be authorised", false);
     }
 
     enum Field {

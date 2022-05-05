@@ -5,6 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import request.User;
+import response.Message;
 
 import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -51,7 +53,10 @@ public class UserCreateFieldsTest {
     public void checkCreateWithUnfilledFields() {
         ValidatableResponse response = client.register(user);
         int statusCode = response.extract().statusCode();
+        Message message = response.extract().as(Message.class);
+
         assertThat(statusCode, equalTo(SC_FORBIDDEN));
+        message.check("Email, password and name are required fields", false);
     }
 
     enum Field {

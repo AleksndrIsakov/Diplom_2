@@ -1,6 +1,8 @@
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
+import request.Ingredient;
+import request.Ingredients;
 
 import java.util.List;
 import java.util.stream.Collectors;

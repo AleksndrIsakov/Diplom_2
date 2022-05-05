@@ -10,6 +10,9 @@ import io.restassured.response.ValidatableResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import request.User;
+import response.Message;
+import response.UserMessage;
 
 @Story("Создание пользователя")
 public class UserCreateTest {
@@ -25,7 +28,6 @@ public class UserCreateTest {
 
     @After
     public void tearDown() {
-        client.getInfo();
         client.delete();
     }
 
@@ -35,7 +37,10 @@ public class UserCreateTest {
 
         ValidatableResponse response = client.register(user);
         int statusCode = response.extract().statusCode();
+        UserMessage message = response.extract().as(UserMessage.class);
+
         assertThat("Код ответа отличается от ожидаемого", statusCode, equalTo(SC_OK));
+        message.check(user.getName(), user.getEmail(), true);
     }
 
     @Test
@@ -44,6 +49,9 @@ public class UserCreateTest {
         client.register(user);
         ValidatableResponse response = client.register(user);
         int statusCode = response.extract().statusCode();
+        Message message = response.extract().as(Message.class);
+
         assertThat("Код ответа отличается от ожидаемого", statusCode, equalTo(SC_FORBIDDEN));
+        message.check("User already exists", false);
     }
 }

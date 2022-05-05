@@ -1,4 +1,7 @@
+package response;
+
 import lombok.Data;
+import request.Ingredient;
 
 import java.util.List;
 

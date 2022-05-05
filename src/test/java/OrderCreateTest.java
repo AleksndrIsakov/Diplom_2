@@ -7,6 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import request.Ingredient;
+import response.Message;
+import response.OrderList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,12 +77,12 @@ public class OrderCreateTest {
         assertThat(statusCode, equalTo(expectedStatusCode));
 
         if (expectedStatusCode == SC_OK) {
-            OrderInfo orderInfo = response.extract().as(OrderInfo.class);
+            OrderList orderInfo = response.extract().as(OrderList.class);
         }
 
         if (expectedStatusCode == SC_BAD_REQUEST) {
             Message message = response.extract().as(Message.class);
-            assertThat(message.getMessage(), equalTo("Ingredient ids must be provided"));
+            message.check("Ingredient ids must be provided", false);
         }
 
     }
@@ -91,6 +94,11 @@ public class OrderCreateTest {
         int statusCode = response.extract().statusCode();
 
         assertThat(statusCode, equalTo(expectedStatusCode));
+
+        if (expectedStatusCode == SC_BAD_REQUEST) {
+            Message message = response.extract().as(Message.class);
+            message.check("Ingredient ids must be provided", false);
+        }
     }
 
     private void checkExpectedBody(ValidatableResponse response) {
